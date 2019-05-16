@@ -7,7 +7,7 @@ function auth(req, res, next) {
   // Check for token
   if(!token) {
     // 401 - unauthorized
-    res.status(401).json({ msg: 'Unauthorized!' });
+    return res.status(401).json({ msg: 'Unauthorized!' });
   }
 
   try {
