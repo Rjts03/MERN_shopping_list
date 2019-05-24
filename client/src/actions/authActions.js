@@ -1,14 +1,6 @@
 import axios from 'axios';
 import { returnErrors } from './errorActions';
-import {
-AUTH_ERROR,
-  // LOGIN_FAIL,
-  // LOGIN_SUCCESS,
-  // LOGOUT_SUCCESS,
-  // REGISTER_FAIL,
-  // REGISTER_SUCCESS,
-  USER_LOADED, USER_LOADING
-} from './types';
+import { AUTH_ERROR, LOGIN_FAIL, LOGIN_SUCCESS, LOGOUT_SUCCESS, REGISTER_FAIL, REGISTER_SUCCESS, USER_LOADED, USER_LOADING } from './types';
 
 // Check token and load user
 export const loadUser = () => (dispatch, getState) => {
@@ -27,6 +19,69 @@ export const loadUser = () => (dispatch, getState) => {
       dispatch(returnErrors(error.response.data, error.response.status));
       dispatch({ type: AUTH_ERROR });
     });
+};
+
+// Register User
+export const register = ({ name, email, password }) => dispatch => {
+  // Headers
+  const config = {
+    headers: {
+      'Content-Type': 'application/json',
+    }
+  };
+
+  // Request Body
+  const body = JSON.stringify({ name, email, password });
+
+  axios
+    .post('/api/users', body, config)
+    .then(res => {
+      dispatch({
+        type: REGISTER_SUCCESS,
+        payload: res.data
+      });
+    })
+    .catch(error => {
+      dispatch(returnErrors(error.response.data, error.response.status, 'REGISTER_FAIL'));
+      dispatch({
+        type: REGISTER_FAIL
+      });
+    })
+};
+
+// Login User
+export const login = ({ email, password }) => dispatch => {
+  // Headers
+  const config = {
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  };
+
+  // Request Body
+  const body = JSON.stringify({ email, password });
+
+  axios
+    .post('/api/auth', body, config)
+    .then(res => {
+      dispatch({
+        type: LOGIN_SUCCESS,
+        payload: res.data
+      });
+    })
+    .catch(error => {
+      dispatch(returnErrors(error.response.data, error.response.status, 'LOGIN_FAIL'));
+      dispatch({
+        type: LOGIN_FAIL
+      });
+    });
+};
+
+// Logout user
+export const logout = () => {
+  return {
+    type: LOGOUT_SUCCESS
+  };
 };
 
 // Setup config/headers & token

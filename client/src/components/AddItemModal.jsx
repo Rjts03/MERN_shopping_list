@@ -4,7 +4,7 @@ import { Button, Form, FormGroup, Input, Label, Modal, ModalBody, ModalHeader } 
 import { addItem } from '../actions/itemActions';
 
 const AddItemModal = props => {
-  const { addItem } = props;
+  const { addItem, isAuthenticated } = props;
 
   const [isOpen, setisOpen] = useState(false);
   const [name, setname] = useState('');
@@ -27,13 +27,21 @@ const AddItemModal = props => {
 
   return(
     <div>
-      <Button
-        color="dark"
-        style={{marginBottom: '2rem'}}
-        onClick={toggle}
-      >
-        Add Item
-      </Button>
+      {
+        isAuthenticated ? (
+          <Button
+            color="dark"
+            style={{marginBottom: '2rem'}}
+            onClick={toggle}
+            className="ml-3"
+            size="md"
+          >
+            Add Item
+          </Button>
+        ) : (
+          <h4 className="mb-4 ml-4">Please login to manage items!</h4>
+        )
+      }
       <Modal isOpen={isOpen} toggle={toggle}>
         <ModalHeader toggle={toggle}>Add To Shopping List</ModalHeader>
         <ModalBody>
@@ -59,7 +67,8 @@ const AddItemModal = props => {
 };
 
 const mapStateToProps = state => ({
-  item: state.item
+  item: state.item,
+  isAuthenticated: state.auth.isAuthenticated
 });
 
 export default connect(mapStateToProps, { addItem })(AddItemModal);
